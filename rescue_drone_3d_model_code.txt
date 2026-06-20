@@ -1,0 +1,1447 @@
+<!doctype html>
+<!--
+  Copyright (c) 2026 Muhammed Adnan V. All rights reserved.
+
+  Title: AI Autonomous Search and Rescue Drone 3D Model
+  Owner/Creator: Muhammed Adnan V
+  Created with OpenAI Codex from user-provided drone hardware/software reference data.
+
+  No part of this 3D model, source code, design, layout, interface, labels,
+  structure, or visual representation may be copied, reproduced, modified,
+  distributed, sold, sublicensed, published, displayed, or used commercially
+  without prior written permission from Muhammed Adnan V.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Editable 3D Rescue Drone Model</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101211;
+      --panel: #191d1b;
+      --panel-2: #202622;
+      --line: #344038;
+      --text: #eef4ee;
+      --muted: #aab7af;
+      --teal: #39c6ac;
+      --amber: #ffb347;
+      --red: #ff6b5f;
+      --green: #8ee48b;
+      --steel: #91a8b5;
+      --black: #050606;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      min-height: 100vh;
+    }
+
+    .stage {
+      position: relative;
+      min-width: 0;
+      background:
+        linear-gradient(180deg, #151715 0%, #101211 56%, #0c0d0c 100%);
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    canvas:active { cursor: grabbing; }
+
+    .hud {
+      position: absolute;
+      left: 18px;
+      top: 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      max-width: calc(100% - 36px);
+      pointer-events: none;
+    }
+
+    .title {
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(16,18,17,.78);
+      backdrop-filter: blur(12px);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .quick-controls {
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      background: #222a25;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    button:hover { border-color: #5a6f63; background: #29322d; }
+    button:active { transform: translateY(1px); }
+
+    .labels {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .label {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      padding: 4px 7px;
+      max-width: 180px;
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(8,9,8,.78);
+      color: #f5fff8;
+      font-size: 11px;
+      line-height: 1.2;
+      border-radius: 6px;
+      white-space: normal;
+      text-align: center;
+      opacity: .94;
+      box-shadow: 0 8px 18px rgba(0,0,0,.28);
+    }
+
+    .label.selected {
+      border-color: var(--amber);
+      color: #fff7e8;
+    }
+
+    aside {
+      min-width: 0;
+      height: 100vh;
+      overflow: auto;
+      border-left: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .side-inner {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      overflow: hidden;
+    }
+
+    .section h2 {
+      margin: 0;
+      padding: 12px 12px 10px;
+      font-size: 13px;
+      color: #f4f8f4;
+      border-bottom: 1px solid var(--line);
+      letter-spacing: 0;
+    }
+
+    .model-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+    }
+
+    .stat {
+      background: var(--panel-2);
+      padding: 10px;
+      min-width: 0;
+    }
+
+    .stat strong {
+      display: block;
+      color: #fff;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .search-row {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .search-row input {
+      width: 100%;
+      height: 36px;
+      color: var(--text);
+      border: 1px solid #3f4d44;
+      background: #111412;
+      border-radius: 8px;
+      padding: 0 10px;
+      outline: none;
+    }
+
+    .search-row input:focus { border-color: var(--teal); }
+
+    .group-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .group-tabs button {
+      min-height: 32px;
+      padding: 0 7px;
+      font-size: 12px;
+    }
+
+    .group-tabs button.active {
+      background: #1f3a34;
+      border-color: var(--teal);
+      color: #dffcf4;
+    }
+
+    .element-list {
+      max-height: 330px;
+      overflow: auto;
+      padding: 8px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .element-item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 14px minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+      min-height: 40px;
+      padding: 7px 8px;
+      text-align: left;
+      border-radius: 8px;
+      border-color: transparent;
+      background: #171b18;
+    }
+
+    .element-item.active {
+      border-color: var(--amber);
+      background: #2b2619;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.35);
+    }
+
+    .element-name {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .element-kind {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 11px;
+    }
+
+    .detail {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .selected-title {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .selected-title .swatch {
+      margin-top: 4px;
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+    }
+
+    .selected-title h3 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .selected-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .purpose {
+      color: #dce7dd;
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .control-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .control {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) 48px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .control label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .control input[type="range"] {
+      width: 100%;
+      accent-color: var(--teal);
+    }
+
+    .value {
+      min-width: 0;
+      color: #eef4ee;
+      text-align: right;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .inline-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .color-row {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .color-row label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 36px;
+      padding: 3px;
+      border: 1px solid #3f4d44;
+      background: #111412;
+      border-radius: 8px;
+    }
+
+    .toggles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .toggle {
+      min-height: 38px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toggle input { accent-color: var(--teal); }
+
+    .legend {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .legend b { color: var(--text); font-weight: 600; }
+
+    .copyright-notice {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .copyright-notice strong {
+      color: var(--text);
+      font-weight: 650;
+    }
+
+    @media (max-width: 980px) {
+      body {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(390px, 58vh) minmax(0, 42vh);
+      }
+
+      aside {
+        height: auto;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .side-inner {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+      }
+
+      .section.editor-section { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 680px) {
+      body { grid-template-rows: minmax(360px, 54vh) minmax(0, 46vh); }
+      .hud { left: 10px; top: 10px; }
+      .title h1 { font-size: 15px; }
+      .title p { display: none; }
+      .quick-controls button { min-height: 32px; padding: 0 9px; font-size: 12px; }
+      .side-inner { grid-template-columns: 1fr; padding: 10px; }
+      .control { grid-template-columns: 58px minmax(0, 1fr) 42px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <canvas id="scene" aria-label="Editable 3D model of an autonomous search and rescue drone"></canvas>
+    <div class="hud">
+      <div class="title">
+        <h1>AI Autonomous Search and Rescue Drone</h1>
+        <p>Editable hardware, software, and computer-vision elements</p>
+      </div>
+      <div class="quick-controls">
+        <button id="resetView" type="button">Reset View</button>
+        <button id="explode" type="button">Explode</button>
+        <button id="spin" type="button">Propellers</button>
+      </div>
+    </div>
+    <div id="labels" class="labels" aria-hidden="true"></div>
+  </main>
+
+  <aside>
+    <div class="side-inner">
+      <section class="section">
+        <h2>Model Contents</h2>
+        <div class="model-stats">
+          <div class="stat"><strong>13</strong><span>Hardware</span></div>
+          <div class="stat"><strong>10</strong><span>Software</span></div>
+          <div class="stat"><strong>5</strong><span>AI/CV</span></div>
+        </div>
+        <div class="legend">
+          <span><b>Rescue layout:</b> hexacopter frame, protected avionics bay, dual camera payload, LiDAR, bottom landing sensors, antennas, and rescue team data stack.</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Copyright Notice</h2>
+        <div class="copyright-notice">
+          <strong>Copyright (c) 2026 Muhammed Adnan V. All rights reserved.</strong>
+          <span>AI Autonomous Search and Rescue Drone 3D Model. Unauthorized copying, reproduction, modification, distribution, sale, sublicensing, publication, display, or commercial use is prohibited without prior written permission from Muhammed Adnan V.</span>
+        </div>
+      </section>
+
+      <section class="section editor-section">
+        <h2>Element Editor</h2>
+        <div class="search-row">
+          <input id="search" type="search" placeholder="Search element">
+        </div>
+        <div class="group-tabs">
+          <button data-filter="All" class="active" type="button">All</button>
+          <button data-filter="Hardware" type="button">Hardware</button>
+          <button data-filter="Software" type="button">Software</button>
+        </div>
+        <div id="elementList" class="element-list"></div>
+      </section>
+
+      <section class="section editor-section">
+        <h2>Selected Element</h2>
+        <div class="detail">
+          <div class="selected-title">
+            <span id="selectedSwatch" class="swatch"></span>
+            <div>
+              <h3 id="selectedName">Drone frame</h3>
+              <p id="selectedKind">Hardware</p>
+            </div>
+          </div>
+          <p id="selectedPurpose" class="purpose"></p>
+          <div class="color-row">
+            <label for="colorPicker">Color</label>
+            <input id="colorPicker" type="color">
+          </div>
+          <div class="inline-controls">
+            <button id="toggleVisible" type="button">Hide</button>
+            <button id="resetElement" type="button">Reset</button>
+          </div>
+          <div class="control-grid" id="controls"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Scene Options</h2>
+        <div class="toggles">
+          <label class="toggle"><input id="labelToggle" type="checkbox" checked> Labels</label>
+          <label class="toggle"><input id="autoRotate" type="checkbox"> Auto rotate</label>
+          <label class="toggle"><input id="xray" type="checkbox" checked> Transparent bay</label>
+          <label class="toggle"><input id="grid" type="checkbox" checked> Ground grid</label>
+        </div>
+      </section>
+    </div>
+  </aside>
+
+  <script>
+    const canvas = document.getElementById("scene");
+    const ctx = canvas.getContext("2d", { alpha: false });
+    const labelsRoot = document.getElementById("labels");
+    const elementList = document.getElementById("elementList");
+    const controlsRoot = document.getElementById("controls");
+    const selectedName = document.getElementById("selectedName");
+    const selectedKind = document.getElementById("selectedKind");
+    const selectedPurpose = document.getElementById("selectedPurpose");
+    const selectedSwatch = document.getElementById("selectedSwatch");
+    const colorPicker = document.getElementById("colorPicker");
+    const toggleVisible = document.getElementById("toggleVisible");
+    const labelToggle = document.getElementById("labelToggle");
+    const autoRotate = document.getElementById("autoRotate");
+    const xray = document.getElementById("xray");
+    const gridToggle = document.getElementById("grid");
+
+    const TAU = Math.PI * 2;
+    const DEG = Math.PI / 180;
+    const hardware = "Hardware";
+    const software = "Software";
+    const ai = "AI / Computer Vision";
+
+    const state = {
+      yaw: -38 * DEG,
+      pitch: 20 * DEG,
+      distance: 13.5,
+      selected: "frame",
+      filter: "All",
+      search: "",
+      exploded: false,
+      propellers: false,
+      time: 0,
+      drag: null,
+      hovered: null
+    };
+
+    const palette = {
+      carbon: "#222825",
+      graphite: "#303a35",
+      rotor: "#151817",
+      rescue: "#ff7a1a",
+      teal: "#39c6ac",
+      glass: "#6fc5ff",
+      heat: "#ff5a3e",
+      green: "#75db76",
+      yellow: "#ffd166",
+      purple: "#b28dff",
+      steel: "#91a8b5",
+      white: "#e8f0ea",
+      red: "#ff6b5f"
+    };
+
+    const elementDefs = [
+      {
+        id: "frame", name: "Drone frame", group: hardware, color: palette.carbon,
+        purpose: "Holds all components. This rescue build uses a hexacopter frame for stability and redundancy."
+      },
+      {
+        id: "motors", name: "Motors and propellers", group: hardware, color: palette.rotor,
+        purpose: "Create lift and movement so the drone can fly forward, turn, rise, land, and keep control with six rotors."
+      },
+      {
+        id: "flight-controller", name: "Flight controller", group: hardware, color: palette.green,
+        purpose: "Controls drone movement. PX4, ArduPilot, or Pixhawk can stabilize the drone and execute navigation commands."
+      },
+      {
+        id: "battery", name: "Battery", group: hardware, color: palette.rescue,
+        purpose: "Provides power. A Li-Po pack is modeled under the airframe for balance and a realistic center of gravity."
+      },
+      {
+        id: "rgb-camera", name: "RGB camera", group: hardware, color: palette.glass,
+        purpose: "Captures normal visual images for detecting people, objects, paths, trees, buildings, and obstacles."
+      },
+      {
+        id: "thermal-camera", name: "Thermal camera", group: hardware, color: palette.heat,
+        purpose: "Detects heat for night, fog, and forest use where human bodies are warmer than surroundings."
+      },
+      {
+        id: "gps", name: "GPS module", group: hardware, color: palette.white,
+        purpose: "Finds location by providing latitude, longitude, and altitude to the rescue team."
+      },
+      {
+        id: "imu", name: "IMU", group: hardware, color: palette.yellow,
+        purpose: "Measures tilt, acceleration, angle, and rotation for stable flight."
+      },
+      {
+        id: "lidar", name: "LiDAR or stereo camera", group: hardware, color: palette.teal,
+        purpose: "Measures distance and depth to avoid trees, walls, rocks, poles, and other obstacles."
+      },
+      {
+        id: "ultrasonic", name: "Ultrasonic sensor", group: hardware, color: palette.steel,
+        purpose: "Short-range distance sensing for close obstacles and landing assistance."
+      },
+      {
+        id: "barometer", name: "Barometer", group: hardware, color: palette.purple,
+        purpose: "Measures altitude and helps estimate height above ground."
+      },
+      {
+        id: "computer", name: "Onboard computer", group: hardware, color: palette.teal,
+        purpose: "Runs the AI model. The board represents Jetson Nano, Xavier, Orin, or Raspberry Pi style processing."
+      },
+      {
+        id: "comms", name: "Communication module", group: hardware, color: palette.red,
+        purpose: "Sends data to the team using LTE/5G, LoRa, Wi-Fi, or radio depending on range and area."
+      },
+      {
+        id: "python", name: "Python", group: software, color: "#3776ab",
+        purpose: "AI and image processing language used for machine learning and computer vision."
+      },
+      {
+        id: "opencv", name: "OpenCV", group: software, color: "#60bf63",
+        purpose: "Camera image processing: reads frames, draws boxes, filters images, and handles video."
+      },
+      {
+        id: "tensorflow", name: "TensorFlow / PyTorch", group: software, color: "#ff9f1c",
+        purpose: "Libraries used to train or run human-detection AI models."
+      },
+      {
+        id: "yolo", name: "YOLOv8 / YOLOv9", group: software, color: "#ff4f81",
+        purpose: "Real-time object detection that quickly finds humans and draws bounding boxes."
+      },
+      {
+        id: "deepsort", name: "DeepSORT", group: software, color: "#9b5de5",
+        purpose: "Tracks detected people across frames so the system follows the same person."
+      },
+      {
+        id: "px4", name: "PX4 / ArduPilot", group: software, color: "#00bbf9",
+        purpose: "Autopilot software for flight, waypoint navigation, return-to-home, and safety behavior."
+      },
+      {
+        id: "ros", name: "ROS / ROS2", group: software, color: "#00f5d4",
+        purpose: "Middleware that lets camera, sensors, AI, and navigation modules communicate."
+      },
+      {
+        id: "slam", name: "SLAM", group: software, color: "#f15bb5",
+        purpose: "Mapping without GPS using camera or LiDAR when GPS is weak or unavailable."
+      },
+      {
+        id: "dashboard", name: "Dashboard", group: software, color: "#fee440",
+        purpose: "Rescue team interface showing map, drone location, detections, battery, and alerts."
+      },
+      {
+        id: "map-api", name: "Map API", group: software, color: "#7bd88f",
+        purpose: "Map display using OpenStreetMap or Google Maps to show victim location."
+      },
+      {
+        id: "bounding-box", name: "Bounding box", group: ai, color: palette.green,
+        purpose: "A rectangle around the detected person in the camera feed."
+      },
+      {
+        id: "confidence", name: "Confidence score", group: ai, color: palette.yellow,
+        purpose: "How sure the AI is. The model shows an example 87 percent human detection score."
+      },
+      {
+        id: "false-positive", name: "False positive", group: ai, color: palette.red,
+        purpose: "A warning marker for a rock, tree, or object wrongly detected as a person."
+      },
+      {
+        id: "thermal-fusion", name: "Thermal fusion", group: ai, color: palette.heat,
+        purpose: "Combines normal camera and heat camera data to improve detection accuracy."
+      },
+      {
+        id: "pose-estimation", name: "Pose estimation", group: ai, color: palette.glass,
+        purpose: "Optional body-pose feature to understand whether a person is lying, sitting, or standing."
+      }
+    ];
+
+    const nodes = new Map();
+
+    function vec(x = 0, y = 0, z = 0) { return { x, y, z }; }
+    function add(a, b) { return vec(a.x + b.x, a.y + b.y, a.z + b.z); }
+    function sub(a, b) { return vec(a.x - b.x, a.y - b.y, a.z - b.z); }
+    function scaleVec(a, s) { return vec(a.x * s, a.y * s, a.z * s); }
+    function dot(a, b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+    function cross(a, b) { return vec(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x); }
+    function len(a) { return Math.hypot(a.x, a.y, a.z) || 1; }
+    function norm(a) { return scaleVec(a, 1 / len(a)); }
+
+    function mIdentity() {
+      return [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
+    }
+
+    function mMul(a, b) {
+      const out = new Array(16).fill(0);
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          out[r * 4 + c] =
+            a[r * 4 + 0] * b[0 * 4 + c] +
+            a[r * 4 + 1] * b[1 * 4 + c] +
+            a[r * 4 + 2] * b[2 * 4 + c] +
+            a[r * 4 + 3] * b[3 * 4 + c];
+        }
+      }
+      return out;
+    }
+
+    function mTranslate(x, y, z) {
+      return [1,0,0,x, 0,1,0,y, 0,0,1,z, 0,0,0,1];
+    }
+
+    function mScale(x, y, z) {
+      return [x,0,0,0, 0,y,0,0, 0,0,z,0, 0,0,0,1];
+    }
+
+    function mRotX(a) {
+      const c = Math.cos(a), s = Math.sin(a);
+      return [1,0,0,0, 0,c,-s,0, 0,s,c,0, 0,0,0,1];
+    }
+
+    function mRotY(a) {
+      const c = Math.cos(a), s = Math.sin(a);
+      return [c,0,s,0, 0,1,0,0, -s,0,c,0, 0,0,0,1];
+    }
+
+    function mRotZ(a) {
+      const c = Math.cos(a), s = Math.sin(a);
+      return [c,-s,0,0, s,c,0,0, 0,0,1,0, 0,0,0,1];
+    }
+
+    function transformPoint(m, p) {
+      return vec(
+        m[0] * p.x + m[1] * p.y + m[2] * p.z + m[3],
+        m[4] * p.x + m[5] * p.y + m[6] * p.z + m[7],
+        m[8] * p.x + m[9] * p.y + m[10] * p.z + m[11]
+      );
+    }
+
+    function compose(t) {
+      let m = mIdentity();
+      m = mMul(m, mTranslate(t.x || 0, t.y || 0, t.z || 0));
+      m = mMul(m, mRotZ((t.rz || 0) * DEG));
+      m = mMul(m, mRotY((t.ry || 0) * DEG));
+      m = mMul(m, mRotX((t.rx || 0) * DEG));
+      const s = t.scale ?? 1;
+      m = mMul(m, mScale((t.sx ?? 1) * s, (t.sy ?? 1) * s, (t.sz ?? 1) * s));
+      return m;
+    }
+
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+    function hexToRgb(hex) {
+      const clean = hex.replace("#", "");
+      return {
+        r: parseInt(clean.slice(0, 2), 16),
+        g: parseInt(clean.slice(2, 4), 16),
+        b: parseInt(clean.slice(4, 6), 16)
+      };
+    }
+
+    function shade(hex, amount, alpha = 1) {
+      const c = hexToRgb(hex);
+      const r = clamp(Math.round(c.r * amount), 0, 255);
+      const g = clamp(Math.round(c.g * amount), 0, 255);
+      const b = clamp(Math.round(c.b * amount), 0, 255);
+      return `rgba(${r},${g},${b},${alpha})`;
+    }
+
+    function box(w, h, d) {
+      const x = w / 2, y = h / 2, z = d / 2;
+      const v = [
+        vec(-x,-y,-z), vec(x,-y,-z), vec(x,y,-z), vec(-x,y,-z),
+        vec(-x,-y,z), vec(x,-y,z), vec(x,y,z), vec(-x,y,z)
+      ];
+      const f = [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]];
+      return { vertices: v, faces: f };
+    }
+
+    function cylinder(r = 1, h = 1, segments = 24) {
+      const v = [vec(0, h / 2, 0), vec(0, -h / 2, 0)];
+      for (let i = 0; i < segments; i++) {
+        const a = (i / segments) * TAU;
+        const x = Math.cos(a) * r;
+        const z = Math.sin(a) * r;
+        v.push(vec(x, h / 2, z), vec(x, -h / 2, z));
+      }
+      const faces = [];
+      for (let i = 0; i < segments; i++) {
+        const n = (i + 1) % segments;
+        faces.push([2 + i * 2, 2 + n * 2, 3 + n * 2, 3 + i * 2]);
+        faces.push([0, 2 + i * 2, 2 + n * 2]);
+        faces.push([1, 3 + n * 2, 3 + i * 2]);
+      }
+      return { vertices: v, faces };
+    }
+
+    function sphere(r = 1, lat = 8, lon = 16, squashY = 1) {
+      const vertices = [];
+      for (let y = 0; y <= lat; y++) {
+        const v = y / lat;
+        const phi = v * Math.PI;
+        for (let x = 0; x <= lon; x++) {
+          const u = x / lon;
+          const theta = u * TAU;
+          vertices.push(vec(Math.sin(phi) * Math.cos(theta) * r, Math.cos(phi) * r * squashY, Math.sin(phi) * Math.sin(theta) * r));
+        }
+      }
+      const faces = [];
+      for (let y = 0; y < lat; y++) {
+        for (let x = 0; x < lon; x++) {
+          const a = y * (lon + 1) + x;
+          faces.push([a, a + 1, a + lon + 2, a + lon + 1]);
+        }
+      }
+      return { vertices, faces };
+    }
+
+    function blade(length = 1.7, width = .32, thick = .035) {
+      const l = length / 2, w = width / 2, t = thick / 2;
+      const v = [
+        vec(-l, -t, -w * .35), vec(l, -t, -w), vec(l, -t, w), vec(-l, -t, w * .35),
+        vec(-l, t, -w * .35), vec(l, t, -w), vec(l, t, w), vec(-l, t, w * .35)
+      ];
+      return { vertices: v, faces: [[0,1,2,3], [4,7,6,5], [0,4,5,1], [1,5,6,2], [2,6,7,3], [3,7,4,0]] };
+    }
+
+    function chip(sizeX = .55, sizeZ = .45, h = .07) {
+      return box(sizeX, h, sizeZ);
+    }
+
+    function mesh(geometry, color, local = {}, options = {}) {
+      return {
+        geometry,
+        color,
+        local: compose(local),
+        alpha: options.alpha ?? 1,
+        line: options.line || false,
+        glow: options.glow || false
+      };
+    }
+
+    function barBetween(x1, y1, z1, x2, y2, z2, thickness, color) {
+      const dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
+      const length = Math.hypot(dx, dy, dz);
+      const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2, cz = (z1 + z2) / 2;
+      const ry = Math.atan2(dx, dz) / DEG;
+      const rx = -Math.atan2(dy, Math.hypot(dx, dz)) / DEG;
+      return mesh(cylinder(thickness, length, 14), color, { x: cx, y: cy, z: cz, rx: 90 + rx, ry });
+    }
+
+    function addNode(def, t, builder, anchor = { x: 0, y: 0, z: 0 }) {
+      const node = {
+        ...def,
+        base: { ...t },
+        transform: { ...t, scale: 1 },
+        visible: true,
+        meshes: [],
+        anchor,
+        labelEl: null,
+        explode: vec(0, 0, 0)
+      };
+      builder(node);
+      nodes.set(node.id, node);
+      return node;
+    }
+
+    function def(id) { return elementDefs.find(d => d.id === id); }
+
+    function buildModel() {
+      const frame = addNode(def("frame"), { x: 0, y: 0, z: 0 }, node => {
+        node.meshes.push(mesh(cylinder(1.15, .18, 6), node.color, { y: .06, ry: 30, sx: 1.35, sz: .85 }));
+        node.meshes.push(mesh(cylinder(1.05, .12, 6), "#151817", { y: -.22, ry: 30, sx: 1.25, sz: .78 }));
+        node.meshes.push(mesh(box(1.9, .24, .5), "#2c3631", { y: .02 }));
+        node.meshes.push(mesh(box(.5, .24, 1.45), "#2c3631", { y: .02 }));
+        for (let i = 0; i < 6; i++) {
+          const a = i * TAU / 6;
+          const x = Math.sin(a) * 2.65;
+          const z = Math.cos(a) * 2.65;
+          node.meshes.push(barBetween(0, .02, 0, x, .02, z, .085, i % 2 ? "#27312d" : "#323d37"));
+          node.meshes.push(mesh(box(.36, .1, .2), "#38453f", { x: Math.sin(a) * 1.34, y: .07, z: Math.cos(a) * 1.34, ry: -a / DEG }));
+        }
+        node.meshes.push(mesh(cylinder(.07, 2.25, 10), "#2a332e", { x: -.75, y: -1.04, z: -.75, rx: 90 }));
+        node.meshes.push(mesh(cylinder(.07, 2.25, 10), "#2a332e", { x: .75, y: -1.04, z: -.75, rx: 90 }));
+        node.meshes.push(mesh(cylinder(.065, 1.5, 10), "#3c4942", { x: -.75, y: -.68, z: -.75, rz: 12 }));
+        node.meshes.push(mesh(cylinder(.065, 1.5, 10), "#3c4942", { x: .75, y: -.68, z: -.75, rz: -12 }));
+        node.explode = vec(0, -.25, 0);
+      });
+
+      addNode(def("motors"), { x: 0, y: .18, z: 0 }, node => {
+        for (let i = 0; i < 6; i++) {
+          const a = i * TAU / 6;
+          const x = Math.sin(a) * 2.78;
+          const z = Math.cos(a) * 2.78;
+          node.meshes.push(mesh(cylinder(.28, .36, 24), "#121514", { x, y: .16, z }));
+          node.meshes.push(mesh(cylinder(.34, .08, 24), "#4b5751", { x, y: .4, z }));
+          node.meshes.push(mesh(cylinder(.12, .16, 16), "#b8c0bc", { x, y: .52, z }));
+          node.meshes.push(mesh(blade(1.62, .28, .04), "#cfd8d2", { x, y: .62, z, ry: (i * 17), rz: 0 }));
+          node.meshes.push(mesh(blade(1.62, .28, .04), "#cfd8d2", { x, y: .63, z, ry: (i * 17) + 90, rz: 0 }));
+          node.meshes.push(mesh(cylinder(.52, .025, 32), "#778681", { x, y: .6, z, alpha: .22 }, { alpha: .22 }));
+        }
+        node.explode = vec(0, .65, 0);
+      }, { x: 0, y: .65, z: 0 });
+
+      addNode(def("flight-controller"), { x: 0, y: .38, z: .1 }, node => {
+        node.meshes.push(mesh(box(.95, .08, .65), node.color, {}));
+        node.meshes.push(mesh(box(.34, .08, .28), "#1b2821", { y: .08 }));
+        node.meshes.push(mesh(chip(.2, .18, .07), "#0d1511", { x: -.28, y: .13, z: -.17 }));
+        node.meshes.push(mesh(chip(.17, .15, .07), "#0d1511", { x: .3, y: .13, z: .14 }));
+        node.meshes.push(mesh(box(1.1, .38, .78), "#aee8ff", { y: .16 }, { alpha: .18 }));
+        node.explode = vec(0, .9, .2);
+      });
+
+      addNode(def("battery"), { x: 0, y: -.52, z: .1 }, node => {
+        node.meshes.push(mesh(box(1.5, .42, .72), node.color, {}));
+        node.meshes.push(mesh(box(.05, .44, .74), "#2f1710", { x: -.42 }));
+        node.meshes.push(mesh(box(.05, .44, .74), "#2f1710", { x: .42 }));
+        node.meshes.push(mesh(box(.9, .1, .76), "#111413", { y: .23 }));
+        node.meshes.push(mesh(cylinder(.035, .45, 8), "#e04439", { x: .75, y: .1, z: -.08, rz: 90 }));
+        node.meshes.push(mesh(cylinder(.035, .45, 8), "#171a18", { x: .75, y: 0, z: .08, rz: 90 }));
+        node.explode = vec(0, -.9, 0);
+      });
+
+      addNode(def("rgb-camera"), { x: 0, y: -.1, z: -1.0 }, node => {
+        node.meshes.push(mesh(cylinder(.22, .35, 22), "#252b29", { rx: 90 }));
+        node.meshes.push(mesh(cylinder(.16, .09, 22), node.color, { y: 0, z: -.21, rx: 90 }));
+        node.meshes.push(mesh(sphere(.28, 10, 18, .72), "#1d2320", { y: -.22 }));
+        node.meshes.push(mesh(cylinder(.07, .45, 12), "#3e4944", { y: .24, rx: 90 }));
+        node.explode = vec(0, -.1, -1.1);
+      });
+
+      addNode(def("thermal-camera"), { x: .42, y: -.12, z: -1.06 }, node => {
+        node.meshes.push(mesh(box(.36, .28, .26), "#2b302d", {}));
+        node.meshes.push(mesh(cylinder(.12, .08, 20), node.color, { z: -.16, rx: 90 }));
+        node.meshes.push(mesh(cylinder(.05, .09, 18), "#ffe15a", { z: -.21, rx: 90 }));
+        node.explode = vec(.75, -.08, -1.0);
+      });
+
+      addNode(def("gps"), { x: 0, y: .82, z: .1 }, node => {
+        node.meshes.push(mesh(cylinder(.42, .1, 32), "#e9f0ec", {}));
+        node.meshes.push(mesh(sphere(.38, 8, 20, .35), node.color, { y: .08 }));
+        node.meshes.push(mesh(box(.09, .03, .62), "#111413", { y: .18 }));
+        node.meshes.push(mesh(box(.62, .03, .09), "#111413", { y: .19 }));
+        node.explode = vec(0, 1.25, .2);
+      });
+
+      addNode(def("imu"), { x: -.37, y: .54, z: .24 }, node => {
+        node.meshes.push(mesh(chip(.36, .24, .08), node.color, {}));
+        node.meshes.push(mesh(box(.1, .1, .1), "#111413", { y: .08 }));
+        node.meshes.push(mesh(cylinder(.03, .45, 8), "#f7e682", { x: -.25, y: .05, rz: 90 }));
+        node.explode = vec(-.8, .85, .45);
+      });
+
+      addNode(def("lidar"), { x: -.42, y: -.08, z: -1.08 }, node => {
+        node.meshes.push(mesh(box(.68, .24, .2), "#1e2523", {}));
+        node.meshes.push(mesh(cylinder(.09, .06, 18), node.color, { x: -.2, z: -.13, rx: 90 }));
+        node.meshes.push(mesh(cylinder(.09, .06, 18), node.color, { x: .2, z: -.13, rx: 90 }));
+        node.meshes.push(mesh(box(.56, .04, .04), "#a8fff2", { y: .15, z: -.12 }, { alpha: .75 }));
+        node.explode = vec(-.8, -.1, -1.0);
+      });
+
+      addNode(def("ultrasonic"), { x: 0, y: -.78, z: -.12 }, node => {
+        node.meshes.push(mesh(box(.62, .12, .2), "#222825", {}));
+        node.meshes.push(mesh(cylinder(.12, .08, 24), node.color, { x: -.17, z: -.08, rx: 90 }));
+        node.meshes.push(mesh(cylinder(.12, .08, 24), node.color, { x: .17, z: -.08, rx: 90 }));
+        node.meshes.push(mesh(cylinder(.18, .018, 24), "#a8b8c0", { x: -.17, z: -.13, rx: 90 }, { alpha: .35 }));
+        node.meshes.push(mesh(cylinder(.18, .018, 24), "#a8b8c0", { x: .17, z: -.13, rx: 90 }, { alpha: .35 }));
+        node.explode = vec(0, -1.25, -.25);
+      });
+
+      addNode(def("barometer"), { x: .48, y: .51, z: .23 }, node => {
+        node.meshes.push(mesh(box(.3, .08, .2), node.color, {}));
+        for (let i = 0; i < 3; i++) {
+          node.meshes.push(mesh(box(.22, .012, .018), "#101211", { y: .05, z: -.06 + i * .06 }));
+        }
+        node.explode = vec(.75, .85, .45);
+      });
+
+      addNode(def("computer"), { x: 0, y: .1, z: .72 }, node => {
+        node.meshes.push(mesh(box(.9, .09, .58), node.color, {}));
+        node.meshes.push(mesh(box(.42, .12, .34), "#111413", { y: .12 }));
+        for (let i = 0; i < 5; i++) {
+          node.meshes.push(mesh(box(.36, .045, .025), "#c6d1cc", { y: .21 + i * .03, z: -.12 + i * .06 }));
+        }
+        node.meshes.push(mesh(box(.15, .08, .12), "#26332d", { x: -.32, y: .1, z: .18 }));
+        node.meshes.push(mesh(box(.15, .08, .12), "#26332d", { x: .32, y: .1, z: .18 }));
+        node.explode = vec(0, .25, 1.1);
+      });
+
+      addNode(def("comms"), { x: .85, y: .35, z: .32 }, node => {
+        node.meshes.push(mesh(box(.36, .12, .28), node.color, {}));
+        node.meshes.push(mesh(cylinder(.025, .95, 10), "#e7eeea", { x: .18, y: .53, z: .02, rz: -10 }));
+        node.meshes.push(mesh(cylinder(.025, .75, 10), "#e7eeea", { x: -.12, y: .43, z: .03, rz: 16 }));
+        node.meshes.push(mesh(sphere(.05, 6, 10), "#ffcf5a", { x: .26, y: .98 }));
+        node.explode = vec(1.1, .65, .6);
+      });
+
+      const sw = [
+        "python", "opencv", "tensorflow", "yolo", "deepsort",
+        "px4", "ros", "slam", "dashboard", "map-api"
+      ];
+      sw.forEach((id, i) => {
+        const col = i < 5 ? -1.02 : 1.02;
+        const row = i % 5;
+        const y = .22 - row * .2;
+        const z = .86;
+        const x = col;
+        addNode(def(id), { x, y, z }, node => {
+          node.meshes.push(mesh(box(.55, .11, .2), node.color, {}));
+          node.meshes.push(mesh(box(.43, .02, .04), "#101211", { y: .07, z: -.06 }));
+          node.meshes.push(mesh(box(.14, .025, .04), "#e9f0ec", { x: -.16, y: .08, z: .04 }));
+          node.meshes.push(mesh(box(.14, .025, .04), "#e9f0ec", { x: .16, y: .08, z: .04 }));
+          node.explode = vec(col * .8, .1, 1.15);
+        });
+      });
+
+      addNode(def("bounding-box"), { x: 0, y: -.16, z: -1.78 }, node => {
+        node.meshes.push(mesh(box(.04, .72, .035), node.color, { x: -.32 }));
+        node.meshes.push(mesh(box(.04, .72, .035), node.color, { x: .32 }));
+        node.meshes.push(mesh(box(.68, .04, .035), node.color, { y: .34 }));
+        node.meshes.push(mesh(box(.68, .04, .035), node.color, { y: -.34 }));
+        node.explode = vec(0, -.2, -1.7);
+      });
+
+      addNode(def("confidence"), { x: .52, y: .24, z: -1.79 }, node => {
+        node.meshes.push(mesh(box(.46, .18, .04), "#171b18", {}));
+        node.meshes.push(mesh(box(.36, .05, .045), node.color, { y: .03 }));
+        node.meshes.push(mesh(box(.18, .035, .05), "#fff7c2", { y: -.04 }));
+        node.explode = vec(.8, .35, -1.65);
+      });
+
+      addNode(def("false-positive"), { x: -.65, y: -.42, z: -1.64 }, node => {
+        node.meshes.push(mesh(sphere(.18, 5, 8, .72), "#6e655b", {}));
+        node.meshes.push(mesh(box(.55, .04, .04), node.color, { y: .28, rz: 45 }));
+        node.meshes.push(mesh(box(.55, .04, .04), node.color, { y: .28, rz: -45 }));
+        node.explode = vec(-.9, -.55, -1.45);
+      });
+
+      addNode(def("thermal-fusion"), { x: -.56, y: .22, z: -1.72 }, node => {
+        node.meshes.push(mesh(box(.38, .34, .04), "#1a1e1c", {}));
+        node.meshes.push(mesh(box(.17, .3, .045), "#41c6ff", { x: -.095 }, { alpha: .82 }));
+        node.meshes.push(mesh(box(.17, .3, .045), node.color, { x: .095 }, { alpha: .82 }));
+        node.meshes.push(mesh(sphere(.06, 6, 10, 1.3), "#ffe15a", { x: .12, y: .03, z: -.03 }));
+        node.explode = vec(-.9, .35, -1.6);
+      });
+
+      addNode(def("pose-estimation"), { x: 0, y: -.14, z: -1.86 }, node => {
+        node.meshes.push(mesh(sphere(.07, 8, 10), node.color, { y: .18 }));
+        node.meshes.push(mesh(cylinder(.018, .36, 8), node.color, { y: -.02 }));
+        node.meshes.push(mesh(cylinder(.016, .36, 8), node.color, { x: -.13, y: .02, rz: 42 }));
+        node.meshes.push(mesh(cylinder(.016, .36, 8), node.color, { x: .13, y: .02, rz: -42 }));
+        node.meshes.push(mesh(cylinder(.016, .34, 8), node.color, { x: -.1, y: -.28, rz: -28 }));
+        node.meshes.push(mesh(cylinder(.016, .34, 8), node.color, { x: .1, y: -.28, rz: 28 }));
+        node.explode = vec(0, -.25, -1.95);
+      });
+    }
+
+    buildModel();
+
+    function createLabels() {
+      labelsRoot.innerHTML = "";
+      nodes.forEach(node => {
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = "label";
+        el.textContent = node.name;
+        el.addEventListener("click", () => selectNode(node.id));
+        labelsRoot.appendChild(el);
+        node.labelEl = el;
+      });
+    }
+
+    createLabels();
+
+    function cameraBasis() {
+      const cp = Math.cos(state.pitch), sp = Math.sin(state.pitch);
+      const pos = vec(
+        Math.sin(state.yaw) * cp * state.distance,
+        sp * state.distance,
+        Math.cos(state.yaw) * cp * state.distance
+      );
+      const target = vec(0, 0, 0);
+      const forward = norm(sub(target, pos));
+      const right = norm(cross(forward, vec(0, 1, 0)));
+      const up = cross(right, forward);
+      return { pos, target, forward, right, up };
+    }
+
+    function project(world, basis) {
+      const d = sub(world, basis.pos);
+      const z = dot(d, basis.forward);
+      if (z < .2) return null;
+      const x = dot(d, basis.right);
+      const y = dot(d, basis.up);
+      const f = Math.min(canvas.width, canvas.height) * .92;
+      return {
+        x: canvas.width / 2 + x * f / z,
+        y: canvas.height / 2 - y * f / z,
+        z
+      };
+    }
+
+    function nodeMatrix(node) {
+      const t = { ...node.transform };
+      if (state.exploded) {
+        t.x += node.explode.x;
+        t.y += node.explode.y;
+        t.z += node.explode.z;
+      }
+      return compose(t);
+    }
+
+    function collectFaces(basis) {
+      const light = norm(vec(-.45, .85, -.36));
+      const faces = [];
+      nodes.forEach(node => {
+        if (!node.visible) return;
+        const nm = nodeMatrix(node);
+        node.meshes.forEach(localMesh => {
+          let lm = localMesh.local;
+          if (node.id === "motors" && state.propellers) {
+            const spin = state.time * 700;
+            const isBlade = localMesh.geometry.vertices.length === 8 && Math.abs(localMesh.geometry.vertices[1].x - localMesh.geometry.vertices[0].x) > 1.4;
+            if (isBlade) lm = mMul(localMesh.local, mRotY(spin * DEG));
+          }
+          const matrix = mMul(nm, lm);
+          const worldVerts = localMesh.geometry.vertices.map(v => transformPoint(matrix, v));
+          const cameraVerts = worldVerts.map(v => project(v, basis));
+          localMesh.geometry.faces.forEach(face => {
+            const ptsWorld = face.map(i => worldVerts[i]);
+            const pts = face.map(i => cameraVerts[i]);
+            if (pts.some(p => !p)) return;
+            const normal = norm(cross(sub(ptsWorld[1], ptsWorld[0]), sub(ptsWorld[2], ptsWorld[0])));
+            const toCam = norm(sub(basis.pos, ptsWorld[0]));
+            if (dot(normal, toCam) < -.08 && localMesh.alpha >= .95) return;
+            const brightness = .34 + Math.max(0, dot(normal, light)) * .66;
+            const selectedBoost = node.id === state.selected ? .18 : 0;
+            const avgZ = pts.reduce((sum, p) => sum + p.z, 0) / pts.length;
+            const alpha = localMesh.alpha;
+            faces.push({
+              node,
+              pts,
+              avgZ,
+              fill: shade(node.color === localMesh.color ? node.color : localMesh.color, brightness + selectedBoost, alpha),
+              stroke: node.id === state.selected ? "rgba(255, 190, 83, .95)" : shade("#000000", 1, alpha > .95 ? .18 : .1),
+              lineWidth: node.id === state.selected ? 1.4 : .45,
+              glow: localMesh.glow
+            });
+          });
+        });
+      });
+      faces.sort((a, b) => b.avgZ - a.avgZ);
+      return faces;
+    }
+
+    function drawGround(basis) {
+      if (!gridToggle.checked) return;
+      ctx.save();
+      ctx.lineWidth = 1;
+      for (let i = -8; i <= 8; i++) {
+        const a = project(vec(i, -1.35, -8), basis);
+        const b = project(vec(i, -1.35, 8), basis);
+        const c = project(vec(-8, -1.35, i), basis);
+        const d = project(vec(8, -1.35, i), basis);
+        ctx.strokeStyle = i === 0 ? "rgba(57,198,172,.32)" : "rgba(255,255,255,.07)";
+        if (a && b) drawLine(a, b);
+        if (c && d) drawLine(c, d);
+      }
+      ctx.restore();
+    }
+
+    function drawLine(a, b) {
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+
+    function drawFaces(faces) {
+      faces.forEach(face => {
+        ctx.beginPath();
+        ctx.moveTo(face.pts[0].x, face.pts[0].y);
+        for (let i = 1; i < face.pts.length; i++) ctx.lineTo(face.pts[i].x, face.pts[i].y);
+        ctx.closePath();
+        ctx.fillStyle = face.fill;
+        ctx.fill();
+        ctx.strokeStyle = face.stroke;
+        ctx.lineWidth = face.lineWidth;
+        ctx.stroke();
+      });
+    }
+
+    function drawScene() {
+      const dpr = window.devicePixelRatio || 1;
+      const w = Math.max(1, canvas.clientWidth);
+      const h = Math.max(1, canvas.clientHeight);
+      if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+      }
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "#101211";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const grd = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      grd.addColorStop(0, "#171a18");
+      grd.addColorStop(.58, "#101211");
+      grd.addColorStop(1, "#0b0c0b");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const basis = cameraBasis();
+      drawGround(basis);
+      const faces = collectFaces(basis);
+      drawFaces(faces);
+      updateLabels(basis);
+    }
+
+    function updateLabels(basis) {
+      const showLabels = labelToggle.checked;
+      nodes.forEach(node => {
+        const el = node.labelEl;
+        if (!el) return;
+        const p = project(transformPoint(nodeMatrix(node), node.anchor), basis);
+        const isSelected = node.id === state.selected;
+        el.classList.toggle("selected", isSelected);
+        el.style.display = showLabels && node.visible && p && (isSelected || state.exploded) ? "block" : "none";
+        if (p) {
+          el.style.left = `${p.x / (window.devicePixelRatio || 1)}px`;
+          el.style.top = `${p.y / (window.devicePixelRatio || 1)}px`;
+          el.style.zIndex = `${Math.max(1, Math.round(5000 - p.z * 10))}`;
+        }
+      });
+    }
+
+    function renderLoop(now) {
+      state.time = now / 1000;
+      if (autoRotate.checked && !state.drag) state.yaw += .004;
+      drawScene();
+      requestAnimationFrame(renderLoop);
+    }
+
+    function selectNode(id) {
+      state.selected = id;
+      renderList();
+      renderEditor();
+    }
+
+    function renderList() {
+      const query = state.search.trim().toLowerCase();
+      elementList.innerHTML = "";
+      elementDefs
+        .filter(item => state.filter === "All" || item.group === state.filter || (state.filter === software && item.group === ai))
+        .filter(item => !query || `${item.name} ${item.group} ${item.purpose}`.toLowerCase().includes(query))
+        .forEach(item => {
+          const node = nodes.get(item.id);
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `element-item${item.id === state.selected ? " active" : ""}`;
+          button.innerHTML = `<span class="swatch" style="background:${node.color}"></span><span><span class="element-name">${item.name}</span><span class="element-kind">${item.group}</span></span>`;
+          button.addEventListener("click", () => selectNode(item.id));
+          elementList.appendChild(button);
+        });
+    }
+
+    const controlDefs = [
+      ["x", "X", -3, 3, .01],
+      ["y", "Y", -2, 2, .01],
+      ["z", "Z", -3, 3, .01],
+      ["rx", "Rot X", -180, 180, 1],
+      ["ry", "Rot Y", -180, 180, 1],
+      ["rz", "Rot Z", -180, 180, 1],
+      ["scale", "Scale", .35, 2.2, .01]
+    ];
+
+    function renderEditor() {
+      const node = nodes.get(state.selected);
+      selectedName.textContent = node.name;
+      selectedKind.textContent = node.group;
+      selectedPurpose.textContent = node.purpose;
+      selectedSwatch.style.background = node.color;
+      colorPicker.value = node.color;
+      toggleVisible.textContent = node.visible ? "Hide" : "Show";
+      controlsRoot.innerHTML = "";
+      controlDefs.forEach(([key, label, min, max, step]) => {
+        const row = document.createElement("div");
+        row.className = "control";
+        const value = document.createElement("span");
+        value.className = "value";
+        const input = document.createElement("input");
+        input.type = "range";
+        input.min = min;
+        input.max = max;
+        input.step = step;
+        input.value = node.transform[key] ?? (key === "scale" ? 1 : 0);
+        value.textContent = Number(input.value).toFixed(key === "scale" ? 2 : 1);
+        input.addEventListener("input", () => {
+          node.transform[key] = Number(input.value);
+          value.textContent = Number(input.value).toFixed(key === "scale" ? 2 : 1);
+        });
+        const lab = document.createElement("label");
+        lab.textContent = label;
+        row.append(lab, input, value);
+        controlsRoot.appendChild(row);
+      });
+    }
+
+    document.querySelectorAll(".group-tabs button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".group-tabs button").forEach(b => b.classList.remove("active"));
+        button.classList.add("active");
+        state.filter = button.dataset.filter;
+        renderList();
+      });
+    });
+
+    document.getElementById("search").addEventListener("input", event => {
+      state.search = event.target.value;
+      renderList();
+    });
+
+    colorPicker.addEventListener("input", event => {
+      const node = nodes.get(state.selected);
+      node.color = event.target.value;
+      selectedSwatch.style.background = node.color;
+      renderList();
+    });
+
+    toggleVisible.addEventListener("click", () => {
+      const node = nodes.get(state.selected);
+      node.visible = !node.visible;
+      toggleVisible.textContent = node.visible ? "Hide" : "Show";
+    });
+
+    document.getElementById("resetElement").addEventListener("click", () => {
+      const node = nodes.get(state.selected);
+      node.transform = { ...node.base, scale: 1 };
+      node.visible = true;
+      node.color = elementDefs.find(item => item.id === node.id).color;
+      renderEditor();
+      renderList();
+    });
+
+    document.getElementById("resetView").addEventListener("click", () => {
+      state.yaw = -38 * DEG;
+      state.pitch = 20 * DEG;
+      state.distance = 13.5;
+    });
+
+    document.getElementById("explode").addEventListener("click", event => {
+      state.exploded = !state.exploded;
+      event.currentTarget.textContent = state.exploded ? "Assemble" : "Explode";
+    });
+
+    document.getElementById("spin").addEventListener("click", event => {
+      state.propellers = !state.propellers;
+      event.currentTarget.textContent = state.propellers ? "Stop Props" : "Propellers";
+    });
+
+    xray.addEventListener("change", () => {
+      const fc = nodes.get("flight-controller");
+      fc.meshes.forEach(m => {
+        if (m.color === "#aee8ff") m.alpha = xray.checked ? .18 : .04;
+      });
+    });
+
+    canvas.addEventListener("pointerdown", event => {
+      canvas.setPointerCapture(event.pointerId);
+      state.drag = { x: event.clientX, y: event.clientY, yaw: state.yaw, pitch: state.pitch };
+    });
+
+    canvas.addEventListener("pointermove", event => {
+      if (!state.drag) return;
+      const dx = event.clientX - state.drag.x;
+      const dy = event.clientY - state.drag.y;
+      state.yaw = state.drag.yaw + dx * .008;
+      state.pitch = clamp(state.drag.pitch + dy * .006, -1.2, 1.25);
+    });
+
+    canvas.addEventListener("pointerup", event => {
+      canvas.releasePointerCapture(event.pointerId);
+      state.drag = null;
+    });
+
+    canvas.addEventListener("wheel", event => {
+      event.preventDefault();
+      state.distance = clamp(state.distance + event.deltaY * .012, 7, 32);
+    }, { passive: false });
+
+    renderList();
+    renderEditor();
+    requestAnimationFrame(renderLoop);
+  </script>
+</body>
+</html>
